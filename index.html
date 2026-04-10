@@ -1,0 +1,1654 @@
+<!-- <!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>The World of Aldar</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      background: #000;
+      overflow: hidden;
+      font-family: 'Segoe UI', Arial, sans-serif;
+    }
+
+    #c {
+      display: block;
+      width: 100vw;
+      height: 100vh;
+    }
+
+    #loading {
+      position: fixed;
+      inset: 0;
+      background: #000;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      z-index: 999;
+    }
+
+    .ring {
+      width: 52px;
+      height: 52px;
+      border: 3px solid rgba(255, 255, 255, 0.07);
+      border-top-color: rgba(80, 160, 255, 0.9);
+      border-radius: 50%;
+      animation: spin 0.85s linear infinite;
+      margin-bottom: 14px;
+    }
+
+    @keyframes spin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    #loading p {
+      color: rgba(100, 180, 255, 0.65);
+      font-size: 11px;
+      letter-spacing: 3px;
+    }
+
+    #menu-btn {
+      position: fixed;
+      top: 20px;
+      right: 24px;
+      width: 48px;
+      height: 48px;
+      background: rgba(30, 30, 40, 0.75);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 50%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 5px;
+      cursor: pointer;
+      z-index: 300;
+      backdrop-filter: blur(12px);
+      transition: background 0.2s;
+    }
+
+    #menu-btn:hover {
+      background: rgba(50, 50, 65, 0.9);
+    }
+
+    #menu-btn span {
+      display: block;
+      width: 20px;
+      height: 2px;
+      background: #fff;
+      border-radius: 2px;
+    }
+
+    .flag-marker {
+      position: fixed;
+      pointer-events: auto;
+      cursor: pointer;
+      transform: translate(-50%, -100%);
+      z-index: 50;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      transition: opacity 0.3s;
+      filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.5));
+    }
+
+    .pin-icon {
+      width: 36px;
+      height: 48px;
+      position: relative;
+      transition: transform 0.2s;
+    }
+
+    .pin-icon svg {
+      width: 100%;
+      height: 100%;
+    }
+
+    .flag-marker:hover .pin-icon {
+      transform: scale(1.15);
+    }
+
+    .flag-marker.active-flag .pin-icon {
+      transform: scale(1.2);
+      filter: brightness(1.1);
+    }
+
+    #bottom-panel {
+      position: fixed;
+      bottom: 36px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 300;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .panel-row {
+      display: flex;
+      align-items: flex-end;
+      gap: 14px;
+    }
+
+    .side-flags {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      margin-bottom: 4px;
+    }
+
+    .side-flag {
+      width: 54px;
+      height: 54px;
+      border-radius: 50%;
+      border: 2.5px solid rgba(255, 255, 255, 0.22);
+      overflow: hidden;
+      cursor: pointer;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.6);
+      transition: transform 0.2s, border-color 0.2s;
+      flex-shrink: 0;
+    }
+
+    .side-flag:hover {
+      transform: scale(1.1);
+      border-color: rgba(255, 255, 255, 0.55);
+    }
+
+    .side-flag img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .info-card {
+      background: rgba(14, 14, 20, 0.92);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 18px;
+      padding: 16px 20px 15px;
+      min-width: 240px;
+      backdrop-filter: blur(24px);
+      box-shadow: 0 24px 60px rgba(0, 0, 0, 0.85);
+    }
+
+    .card-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 13px;
+    }
+
+    .card-flag-img {
+      width: 36px;
+      height: 24px;
+      border-radius: 4px;
+      object-fit: cover;
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      flex-shrink: 0;
+    }
+
+    .card-title {
+      font-size: 16px;
+      font-weight: 700;
+      color: #fff;
+      line-height: 1.2;
+    }
+
+    .card-sub {
+      font-size: 11px;
+      color: rgba(255, 255, 255, 0.4);
+      margin-top: 2px;
+    }
+
+    .explore-btn {
+      width: 100%;
+      padding: 12px 0;
+      background: linear-gradient(90deg, #d94e0c, #f07828);
+      border: none;
+      border-radius: 11px;
+      color: #fff;
+      font-size: 14px;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      cursor: pointer;
+      transition: opacity 0.2s, transform 0.15s;
+      box-shadow: 0 4px 16px rgba(220, 80, 20, 0.4);
+    }
+
+    .explore-btn:hover {
+      opacity: 0.88;
+      transform: translateY(-1px);
+    }
+
+    #dots {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.25);
+      cursor: pointer;
+      transition: background 0.25s, transform 0.2s;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .dot.active {
+      background: #fff;
+      transform: scale(1.15);
+    }
+
+    #branding {
+      position: fixed;
+      bottom: 20px;
+      right: 22px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      z-index: 300;
+    }
+
+    #branding-text {
+      text-align: right;
+      line-height: 1.25;
+    }
+
+    #branding-text .b1 {
+      font-size: 12px;
+      color: rgba(255, 255, 255, 0.55);
+      letter-spacing: 0.5px;
+    }
+
+    #branding-text .b2 {
+      font-size: 14px;
+      font-weight: 700;
+      color: #fff;
+      letter-spacing: 0.5px;
+    }
+
+    #branding-logo {
+      width: 44px;
+      height: 44px;
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 10px;
+      color: #fff;
+      font-weight: 700;
+      letter-spacing: 1px;
+    }
+
+    #upload {
+      position: fixed;
+      top: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 200;
+    }
+
+    #upload label {
+      display: inline-block;
+      padding: 8px 20px;
+      background: rgba(255, 255, 255, 0.07);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: 999px;
+      color: rgba(255, 255, 255, 0.5);
+      font-size: 11px;
+      letter-spacing: 1px;
+      cursor: pointer;
+      transition: all 0.2s;
+      backdrop-filter: blur(8px);
+    }
+
+    #upload label:hover {
+      background: rgba(255, 255, 255, 0.13);
+      color: #fff;
+    }
+
+    #file-in {
+      display: none;
+    }
+  </style>
+</head>
+
+<body>
+  <div id="loading">
+    <div class="ring"></div>
+    <p>LOADING</p>
+  </div>
+  <canvas id="c"></canvas>
+  <div id="upload"><label for="file-in">Load Earth GLB</label><input type="file" id="file-in" accept=".glb,.gltf"></div>
+  <div id="menu-btn"><span></span><span></span><span></span></div>
+  <div id="flags-container"></div>
+  <div id="bottom-panel">
+    <div class="panel-row">
+      <div class="side-flags" id="side-flags"></div>
+      <div class="info-card">
+        <div class="card-header">
+          <img class="card-flag-img" id="card-flag-img" src="" alt="">
+          <div>
+            <div class="card-title" id="card-name"></div>
+            <div class="card-sub" id="card-sub"></div>
+          </div>
+        </div>
+        <button class="explore-btn" id="explore-btn">Explore</button>
+      </div>
+    </div>
+    <div id="dots"></div>
+  </div>
+  <div id="branding">
+    <div id="branding-text">
+      <div class="b1">The World</div>
+      <div class="b2">of Aldar</div>
+    </div>
+    <div id="branding-logo">ALDAR</div>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.134.0/examples/js/loaders/GLTFLoader.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.134.0/examples/js/controls/OrbitControls.js"></script>
+  <script>
+    const LOCATIONS = [
+      { id: 'punjab', name: 'Punjab, India', sub: 'India · 3 Projects', lat: 31.1, lon: 75.3, zoomDist: 2.2, flag: 'https://flagcdn.com/w80/in.png' },
+      { id: 'canada', name: 'Canada', sub: 'North America · 5 Projects', lat: 45.5, lon: -75.5, zoomDist: 2.4, flag: 'https://flagcdn.com/w80/ca.png' },
+    ];
+
+    let activeIndex = 0;
+
+    const canvas = document.getElementById('c');
+    const renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
+    renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+    renderer.setSize(innerWidth, innerHeight);
+    renderer.setClearColor(0x000000, 1);
+    renderer.toneMapping = THREE.ACESFilmicToneMapping;
+    renderer.toneMappingExposure = 1.1;
+
+    const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(38, innerWidth / innerHeight, 0.01, 5000);
+    camera.position.set(0, 1.6, 4.4);
+    camera.lookAt(0, 0.5, 0);
+
+    const controls = new THREE.OrbitControls(camera, canvas);
+    controls.enableDamping = true; controls.dampingFactor = 0.04;
+    controls.enableZoom = false; controls.enablePan = false;
+    controls.autoRotate = false; controls.target.set(0, 0.5, 0);
+
+    const sun = new THREE.DirectionalLight(0xfff5ee, 4.0); sun.position.set(-5, 6, 3); scene.add(sun);
+    scene.add(new THREE.AmbientLight(0x060810, 1.5));
+    const back = new THREE.DirectionalLight(0x0d1f44, 0.35); back.position.set(4, -3, -4); scene.add(back);
+
+    // Space background
+    (function () {
+      const W = 4096, H = 2048, cv = document.createElement('canvas'); cv.width = W; cv.height = H;
+      const ctx = cv.getContext('2d'); ctx.fillStyle = '#000'; ctx.fillRect(0, 0, W, H);
+      [{ x: .06, y: .52, r: .24, a: .2 }, { x: .83, y: .18, r: .18, a: .12 }].forEach(n => {
+        const g = ctx.createRadialGradient(n.x * W, n.y * H, 0, n.x * W, n.y * H, n.r * W);
+        g.addColorStop(0, `rgba(48,52,80,${n.a})`); g.addColorStop(1, 'rgba(0,0,0,0)');
+        ctx.fillStyle = g; ctx.fillRect(0, 0, W, H);
+      });
+      for (let i = 0; i < 6000; i++) { const x = Math.random() * W, y = Math.random() * H; ctx.beginPath(); ctx.arc(x, y, Math.random() * 0.65 + 0.12, 0, Math.PI * 2); ctx.fillStyle = `rgba(255,255,255,${Math.random() * 0.4 + 0.12})`; ctx.fill(); }
+      for (let i = 0; i < 550; i++) { const x = Math.random() * W, y = Math.random() * H; ctx.beginPath(); ctx.arc(x, y, Math.random() * 0.85 + 0.45, 0, Math.PI * 2); ctx.fillStyle = `rgba(195,215,255,${Math.random() * 0.4 + 0.38})`; ctx.fill(); }
+      scene.background = new THREE.CanvasTexture(cv);
+    })();
+
+    let atmoMeshes = [];
+    function buildAtmo(rad) {
+      atmoMeshes.forEach(m => scene.remove(m)); atmoMeshes = [];
+      const geo = new THREE.SphereGeometry(rad * 1.008, 128, 128);
+      const mat = new THREE.ShaderMaterial({
+        transparent: true, depthWrite: false, side: THREE.BackSide,
+        uniforms: { sunDir: { value: new THREE.Vector3(-5, 6, 3).normalize() } },
+        vertexShader: `varying vec3 vN,vV;void main(){vN=normalize(normalMatrix*normal);vV=normalize(-(modelViewMatrix*vec4(position,1.0)).xyz);gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.0);}`,
+        fragmentShader: `varying vec3 vN,vV;uniform vec3 sunDir;void main(){float rim=pow(1.0-clamp(dot(vV,vN),0.0,1.0),3.0);float sun=clamp(dot(vN,sunDir)*1.8+0.55,0.0,1.0);vec3 col=mix(vec3(0.2,0.5,1.0),vec3(0.5,0.75,1.0),rim);gl_FragColor=vec4(col,rim*sun*0.8);}`,
+      });
+      const mesh = new THREE.Mesh(geo, mat); scene.add(mesh); atmoMeshes.push(mesh);
+    }
+
+    const earthGroup = new THREE.Group();
+    earthGroup.rotation.z = THREE.MathUtils.degToRad(23.4);
+    scene.add(earthGroup);
+    let earthRadius = 1.0;
+
+    function clearEarth() { while (earthGroup.children.length) earthGroup.remove(earthGroup.children[0]); }
+    function buildPlaceholder() {
+      clearEarth();
+      earthGroup.add(new THREE.Mesh(new THREE.SphereGeometry(1, 64, 64), new THREE.MeshPhongMaterial({ color: 0x1a6088, emissive: 0x020c18 })));
+      earthRadius = 1.0; buildAtmo(1.0);
+    }
+    buildPlaceholder();
+
+    const gltfLoader = new THREE.GLTFLoader();
+    function loadGLB(url) {
+      document.getElementById('loading').style.display = 'flex';
+      clearEarth(); atmoMeshes.forEach(m => scene.remove(m)); atmoMeshes = [];
+      gltfLoader.load(url, gltf => {
+        const model = gltf.scene, box = new THREE.Box3().setFromObject(model);
+        const size = box.getSize(new THREE.Vector3()), center = box.getCenter(new THREE.Vector3());
+        const s = 2.1 / Math.max(size.x, size.y, size.z);
+        model.scale.setScalar(s); model.position.sub(center.multiplyScalar(s));
+        model.traverse(ch => {
+          if (!ch.isMesh) return; const m = ch.material; if (!m) return;
+          ['map', 'normalMap', 'roughnessMap', 'metalnessMap', 'aoMap', 'emissiveMap'].forEach(k => { if (m[k]) { m[k].anisotropy = renderer.capabilities.getMaxAnisotropy(); m[k].needsUpdate = true; } });
+          if (m.isMeshStandardMaterial) { m.roughness = Math.max(m.roughness ?? 0.6, 0.3); m.metalness = Math.min(m.metalness ?? 0.0, 0.05); } m.needsUpdate = true;
+        });
+        earthGroup.add(model);
+        const nb = new THREE.Box3().setFromObject(earthGroup), ns = nb.getSize(new THREE.Vector3());
+        earthRadius = Math.max(ns.x, ns.y, ns.z) / 2;
+        buildAtmo(earthRadius);
+        rebuildFlags();
+        selectLocation(0);
+        document.getElementById('loading').style.display = 'none';
+        document.getElementById('upload').style.display = 'none';
+      },
+        xhr => { if (xhr.total) document.querySelector('#loading p').textContent = `LOADING ${Math.round(xhr.loaded / xhr.total * 100)}%`; },
+        err => { console.error(err); buildPlaceholder(); document.getElementById('loading').style.display = 'none'; });
+    }
+    document.getElementById('file-in').addEventListener('change', e => { const f = e.target.files[0]; if (f) loadGLB(URL.createObjectURL(f)); });
+
+    function latLonTo3D(lat, lon, radius) {
+      const phi = THREE.MathUtils.degToRad(90 - lat);
+      const theta = THREE.MathUtils.degToRad(-lon);
+      return new THREE.Vector3(radius * Math.sin(phi) * Math.cos(theta), radius * Math.cos(phi), radius * Math.sin(phi) * Math.sin(theta));
+    }
+
+    let flagEls = [];
+    function rebuildFlags() {
+      const cont = document.getElementById('flags-container'); cont.innerHTML = ''; flagEls = [];
+      LOCATIONS.forEach((loc, i) => {
+        const el = document.createElement('div');
+        el.className = 'flag-marker' + (i === activeIndex ? ' active-flag' : '');
+        el.innerHTML = `<div class="pin-icon"><svg viewBox="0 0 36 48" xmlns="http://www.w3.org/2000/svg"><defs><radialGradient id="pg" cx="40%" cy="35%"><stop offset="0%" stop-color="#ff6b3d"/><stop offset="100%" stop-color="#d63a00"/></radialGradient></defs><path d="M18 0C8.06 0 0 8.06 0 18c0 12.6 18 30 18 30s18-17.4 18-30C36 8.06 27.94 0 18 0z" fill="url(#pg)"/><circle cx="18" cy="17" r="7" fill="white" opacity="0.9"/></svg></div>`;
+        el.addEventListener('click', () => selectLocation(i));
+        cont.appendChild(el);
+        flagEls.push({ el, loc, pos3D: latLonTo3D(loc.lat, loc.lon, earthRadius) });
+      });
+    }
+    rebuildFlags();
+
+    function buildDots() {
+      const d = document.getElementById('dots'); d.innerHTML = '';
+      LOCATIONS.forEach((_, i) => { const el = document.createElement('div'); el.className = 'dot' + (i === activeIndex ? ' active' : ''); el.addEventListener('click', () => selectLocation(i)); d.appendChild(el); });
+    }
+    buildDots();
+
+    function selectLocation(index) {
+      activeIndex = index; const loc = LOCATIONS[index];
+      document.getElementById('card-name').textContent = loc.name;
+      document.getElementById('card-sub').textContent = loc.sub;
+      document.getElementById('card-flag-img').src = loc.flag;
+      flagEls.forEach((f, i) => f.el.classList.toggle('active-flag', i === index));
+      const sideEl = document.getElementById('side-flags'); sideEl.innerHTML = '';
+      LOCATIONS.filter((_, i) => i !== index).forEach(other => {
+        const div = document.createElement('div'); div.className = 'side-flag';
+        div.innerHTML = `<img src="${other.flag}" alt="${other.name}">`;
+        div.addEventListener('click', () => selectLocation(LOCATIONS.indexOf(other)));
+        sideEl.appendChild(div);
+      });
+      document.querySelectorAll('.dot').forEach((d, i) => d.classList.toggle('active', i === index));
+      zoomToLocation(loc);
+    }
+
+    function easeInOut(t) { t = Math.min(t, 1); return t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t; }
+    let animating = false;
+
+    function zoomToLocation(loc) {
+      animating = true;
+      const targetTheta = THREE.MathUtils.degToRad(-loc.lon);
+      const desiredRotY = -(targetTheta);
+      const desiredRotX = THREE.MathUtils.degToRad(loc.lat * 0.18);
+      const startRotY = earthGroup.rotation.y, startRotX = earthGroup.rotation.x;
+      let diffY = ((desiredRotY - startRotY) % (Math.PI * 2) + Math.PI * 3) % (Math.PI * 2) - Math.PI;
+      const endRotY = startRotY + diffY;
+      const startDist = camera.position.length(), endDist = loc.zoomDist;
+      const startFOV = camera.fov, endFOV = 30;
+      const duration = 2000, startTime = performance.now();
+
+      function step(now) {
+        const t = easeInOut((now - startTime) / duration);
+        earthGroup.rotation.y = startRotY + (endRotY - startRotY) * t;
+        earthGroup.rotation.x = startRotX + (desiredRotX - startRotX) * t;
+        syncAtmo();
+        const dir = camera.position.clone().normalize();
+        camera.position.copy(dir.multiplyScalar(startDist + (endDist - startDist) * t));
+        camera.fov = startFOV + (endFOV - startFOV) * t;
+        camera.updateProjectionMatrix();
+        if ((now - startTime) < duration) requestAnimationFrame(step);
+        else animating = false;
+      }
+      requestAnimationFrame(step);
+    }
+
+    function syncAtmo() { atmoMeshes.forEach(m => { m.rotation.y = earthGroup.rotation.y; m.rotation.x = earthGroup.rotation.x; }); }
+
+    selectLocation(0);
+    setTimeout(() => { document.getElementById('loading').style.display = 'none'; }, 500);
+
+    window.addEventListener('resize', () => { camera.aspect = innerWidth / innerHeight; camera.updateProjectionMatrix(); renderer.setSize(innerWidth, innerHeight); });
+
+    function animate() {
+      requestAnimationFrame(animate);
+      if (!animating) controls.update();
+      earthGroup.updateMatrixWorld(true);
+      flagEls.forEach(item => {
+        const rotated = item.pos3D.clone().applyEuler(new THREE.Euler(earthGroup.rotation.x, earthGroup.rotation.y, earthGroup.rotation.z, 'XYZ'));
+        const proj = rotated.clone().project(camera);
+        const x = (proj.x * 0.5 + 0.5) * innerWidth, y = (-proj.y * 0.5 + 0.5) * innerHeight;
+        const toCam = camera.position.clone().normalize();
+        const dot = rotated.clone().normalize().dot(toCam);
+        const visible = dot > 0.08 && proj.z < 1.0;
+        item.el.style.left = x + 'px'; item.el.style.top = y + 'px';
+        item.el.style.display = visible ? 'flex' : 'none';
+        item.el.style.opacity = visible ? Math.min(1, (dot - 0.08) * 6) : '0';
+        item.el.style.zIndex = visible ? Math.round(dot * 100) : 0;
+      });
+      renderer.render(scene, camera);
+    }
+    animate();
+  </script>
+</body>
+
+</html> -->
+
+
+
+<!-- <!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>The World of Aldar</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      background: #000;
+      overflow: hidden;
+      font-family: 'Segoe UI', Arial, sans-serif;
+    }
+
+    #c {
+      display: block;
+      width: 100vw;
+      height: 100vh;
+    }
+
+    #loading {
+      position: fixed;
+      inset: 0;
+      background: #000;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      z-index: 999;
+    }
+
+    .ring {
+      width: 52px;
+      height: 52px;
+      border: 3px solid rgba(255, 255, 255, 0.07);
+      border-top-color: rgba(80, 160, 255, 0.9);
+      border-radius: 50%;
+      animation: spin 0.85s linear infinite;
+      margin-bottom: 14px;
+    }
+
+    @keyframes spin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    #loading p {
+      color: rgba(100, 180, 255, 0.65);
+      font-size: 11px;
+      letter-spacing: 3px;
+    }
+
+    #menu-btn {
+      position: fixed;
+      top: 20px;
+      right: 24px;
+      width: 48px;
+      height: 48px;
+      background: rgba(30, 30, 40, 0.75);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 50%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 5px;
+      cursor: pointer;
+      z-index: 300;
+      backdrop-filter: blur(12px);
+      transition: background 0.2s;
+    }
+
+    #menu-btn:hover {
+      background: rgba(50, 50, 65, 0.9);
+    }
+
+    #menu-btn span {
+      display: block;
+      width: 20px;
+      height: 2px;
+      background: #fff;
+      border-radius: 2px;
+    }
+
+    .flag-marker {
+      position: fixed;
+      pointer-events: auto;
+      cursor: pointer;
+      transform: translate(-50%, -100%);
+      z-index: 50;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      transition: opacity 0.3s;
+      filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.5));
+    }
+
+    .pin-icon {
+      width: 36px;
+      height: 48px;
+      position: relative;
+      transition: transform 0.2s;
+    }
+
+    .pin-icon svg {
+      width: 100%;
+      height: 100%;
+    }
+
+    .flag-marker:hover .pin-icon {
+      transform: scale(1.15);
+    }
+
+    .flag-marker.active-flag .pin-icon {
+      transform: scale(1.2);
+      filter: brightness(1.1);
+    }
+
+    #bottom-panel {
+      position: fixed;
+      bottom: 36px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 300;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .panel-row {
+      display: flex;
+      align-items: flex-end;
+      gap: 14px;
+    }
+
+    .side-flags {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      margin-bottom: 4px;
+    }
+
+    .side-flag {
+      width: 54px;
+      height: 54px;
+      border-radius: 50%;
+      border: 2.5px solid rgba(255, 255, 255, 0.22);
+      overflow: hidden;
+      cursor: pointer;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.6);
+      transition: transform 0.2s, border-color 0.2s;
+      flex-shrink: 0;
+    }
+
+    .side-flag:hover {
+      transform: scale(1.1);
+      border-color: rgba(255, 255, 255, 0.55);
+    }
+
+    .side-flag img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .info-card {
+      background: rgba(14, 14, 20, 0.92);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 18px;
+      padding: 16px 20px 15px;
+      min-width: 240px;
+      backdrop-filter: blur(24px);
+      box-shadow: 0 24px 60px rgba(0, 0, 0, 0.85);
+    }
+
+    .card-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 13px;
+    }
+
+    .card-flag-img {
+      width: 36px;
+      height: 24px;
+      border-radius: 4px;
+      object-fit: cover;
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      flex-shrink: 0;
+    }
+
+    .card-title {
+      font-size: 16px;
+      font-weight: 700;
+      color: #fff;
+      line-height: 1.2;
+    }
+
+    .card-sub {
+      font-size: 11px;
+      color: rgba(255, 255, 255, 0.4);
+      margin-top: 2px;
+    }
+
+    .explore-btn {
+      width: 100%;
+      padding: 12px 0;
+      background: linear-gradient(90deg, #d94e0c, #f07828);
+      border: none;
+      border-radius: 11px;
+      color: #fff;
+      font-size: 14px;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      cursor: pointer;
+      transition: opacity 0.2s, transform 0.15s;
+      box-shadow: 0 4px 16px rgba(220, 80, 20, 0.4);
+    }
+
+    .explore-btn:hover {
+      opacity: 0.88;
+      transform: translateY(-1px);
+    }
+
+    #dots {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.25);
+      cursor: pointer;
+      transition: background 0.25s, transform 0.2s;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .dot.active {
+      background: #fff;
+      transform: scale(1.15);
+    }
+
+    #branding {
+      position: fixed;
+      bottom: 20px;
+      right: 22px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      z-index: 300;
+    }
+
+    #branding-text {
+      text-align: right;
+      line-height: 1.25;
+    }
+
+    #branding-text .b1 {
+      font-size: 12px;
+      color: rgba(255, 255, 255, 0.55);
+      letter-spacing: 0.5px;
+    }
+
+    #branding-text .b2 {
+      font-size: 14px;
+      font-weight: 700;
+      color: #fff;
+      letter-spacing: 0.5px;
+    }
+
+    #branding-logo {
+      width: 44px;
+      height: 44px;
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 10px;
+      color: #fff;
+      font-weight: 700;
+      letter-spacing: 1px;
+    }
+
+    #upload {
+      position: fixed;
+      top: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 200;
+    }
+
+    #upload label {
+      display: inline-block;
+      padding: 8px 20px;
+      background: rgba(255, 255, 255, 0.07);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: 999px;
+      color: rgba(255, 255, 255, 0.5);
+      font-size: 11px;
+      letter-spacing: 1px;
+      cursor: pointer;
+      transition: all 0.2s;
+      backdrop-filter: blur(8px);
+    }
+
+    #upload label:hover {
+      background: rgba(255, 255, 255, 0.13);
+      color: #fff;
+    }
+
+    #file-in {
+      display: none;
+    }
+  </style>
+</head>
+
+<body>
+  <div id="loading">
+    <div class="ring"></div>
+    <p>LOADING</p>
+  </div>
+  <canvas id="c"></canvas>
+  <div id="upload"><label for="file-in">Load Earth GLB</label><input type="file" id="file-in" accept=".glb,.gltf"></div>
+  <div id="menu-btn"><span></span><span></span><span></span></div>
+  <div id="flags-container"></div>
+  <div id="bottom-panel">
+    <div class="panel-row">
+      <div class="side-flags" id="side-flags"></div>
+      <div class="info-card">
+        <div class="card-header">
+          <img class="card-flag-img" id="card-flag-img" src="" alt="">
+          <div>
+            <div class="card-title" id="card-name"></div>
+            <div class="card-sub" id="card-sub"></div>
+          </div>
+        </div>
+        <button class="explore-btn" id="explore-btn">Explore</button>
+      </div>
+    </div>
+    <div id="dots"></div>
+  </div>
+  <div id="branding">
+    <div id="branding-text">
+      <div class="b1">The World</div>
+      <div class="b2">of Aldar</div>
+    </div>
+    <div id="branding-logo">ALDAR</div>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.134.0/examples/js/loaders/GLTFLoader.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.134.0/examples/js/controls/OrbitControls.js"></script>
+  <script>
+    const LOCATIONS = [
+      { id: 'punjab', name: 'Punjab, India', sub: 'India · 3 Projects', lat: 31.1, lon: 75.3, zoomDist: 2.2, flag: 'https://flagcdn.com/w80/in.png' },
+      { id: 'canada', name: 'Canada', sub: 'North America · 5 Projects', lat: 45.5, lon: -75.5, zoomDist: 2.4, flag: 'https://flagcdn.com/w80/ca.png' },
+    ];
+
+    let activeIndex = 0;
+
+    const canvas = document.getElementById('c');
+    const renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
+    renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+    renderer.setSize(innerWidth, innerHeight);
+    renderer.setClearColor(0x000000, 1);
+    renderer.toneMapping = THREE.ACESFilmicToneMapping;
+    renderer.toneMappingExposure = 1.1;
+
+    const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(38, innerWidth / innerHeight, 0.01, 5000);
+    camera.position.set(0, 1.6, 4.4);
+    camera.lookAt(0, 0.5, 0);
+
+    const controls = new THREE.OrbitControls(camera, canvas);
+    controls.enableDamping = true; controls.dampingFactor = 0.04;
+    controls.enableZoom = false; controls.enablePan = false;
+    controls.autoRotate = false; controls.target.set(0, 0.5, 0);
+
+    const sun = new THREE.DirectionalLight(0xfff5ee, 4.0); sun.position.set(-5, 6, 3); scene.add(sun);
+    scene.add(new THREE.AmbientLight(0x060810, 1.5));
+    const back = new THREE.DirectionalLight(0x0d1f44, 0.35); back.position.set(4, -3, -4); scene.add(back);
+
+    // Space background
+    (function () {
+      const W = 4096, H = 2048, cv = document.createElement('canvas'); cv.width = W; cv.height = H;
+      const ctx = cv.getContext('2d'); ctx.fillStyle = '#000'; ctx.fillRect(0, 0, W, H);
+      [{ x: .06, y: .52, r: .24, a: .2 }, { x: .83, y: .18, r: .18, a: .12 }].forEach(n => {
+        const g = ctx.createRadialGradient(n.x * W, n.y * H, 0, n.x * W, n.y * H, n.r * W);
+        g.addColorStop(0, `rgba(48,52,80,${n.a})`); g.addColorStop(1, 'rgba(0,0,0,0)');
+        ctx.fillStyle = g; ctx.fillRect(0, 0, W, H);
+      });
+      for (let i = 0; i < 6000; i++) { const x = Math.random() * W, y = Math.random() * H; ctx.beginPath(); ctx.arc(x, y, Math.random() * 0.65 + 0.12, 0, Math.PI * 2); ctx.fillStyle = `rgba(255,255,255,${Math.random() * 0.4 + 0.12})`; ctx.fill(); }
+      for (let i = 0; i < 550; i++) { const x = Math.random() * W, y = Math.random() * H; ctx.beginPath(); ctx.arc(x, y, Math.random() * 0.85 + 0.45, 0, Math.PI * 2); ctx.fillStyle = `rgba(195,215,255,${Math.random() * 0.4 + 0.38})`; ctx.fill(); }
+      scene.background = new THREE.CanvasTexture(cv);
+    })();
+
+    let atmoMeshes = [];
+    function buildAtmo(rad) {
+      atmoMeshes.forEach(m => scene.remove(m)); atmoMeshes = [];
+      const geo = new THREE.SphereGeometry(rad * 1.008, 128, 128);
+      const mat = new THREE.ShaderMaterial({
+        transparent: true, depthWrite: false, side: THREE.BackSide,
+        uniforms: { sunDir: { value: new THREE.Vector3(-5, 6, 3).normalize() } },
+        vertexShader: `varying vec3 vN,vV;void main(){vN=normalize(normalMatrix*normal);vV=normalize(-(modelViewMatrix*vec4(position,1.0)).xyz);gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.0);}`,
+        fragmentShader: `varying vec3 vN,vV;uniform vec3 sunDir;void main(){float rim=pow(1.0-clamp(dot(vV,vN),0.0,1.0),3.0);float sun=clamp(dot(vN,sunDir)*1.8+0.55,0.0,1.0);vec3 col=mix(vec3(0.2,0.5,1.0),vec3(0.5,0.75,1.0),rim);gl_FragColor=vec4(col,rim*sun*0.8);}`,
+      });
+      const mesh = new THREE.Mesh(geo, mat); scene.add(mesh); atmoMeshes.push(mesh);
+    }
+
+    const earthGroup = new THREE.Group();
+    scene.add(earthGroup);
+    let earthRadius = 1.0;
+
+    function clearEarth() { while (earthGroup.children.length) earthGroup.remove(earthGroup.children[0]); }
+    function buildPlaceholder() {
+      clearEarth();
+      earthGroup.add(new THREE.Mesh(new THREE.SphereGeometry(1, 64, 64), new THREE.MeshPhongMaterial({ color: 0x1a6088, emissive: 0x020c18 })));
+      earthRadius = 1.0; buildAtmo(1.0);
+    }
+    buildPlaceholder();
+
+    const gltfLoader = new THREE.GLTFLoader();
+    function loadGLB(url) {
+      document.getElementById('loading').style.display = 'flex';
+      clearEarth(); atmoMeshes.forEach(m => scene.remove(m)); atmoMeshes = [];
+      gltfLoader.load(url, gltf => {
+        const model = gltf.scene, box = new THREE.Box3().setFromObject(model);
+        const size = box.getSize(new THREE.Vector3()), center = box.getCenter(new THREE.Vector3());
+        const s = 2.1 / Math.max(size.x, size.y, size.z);
+        model.scale.setScalar(s); model.position.sub(center.multiplyScalar(s));
+        model.traverse(ch => {
+          if (!ch.isMesh) return; const m = ch.material; if (!m) return;
+          ['map', 'normalMap', 'roughnessMap', 'metalnessMap', 'aoMap', 'emissiveMap'].forEach(k => { if (m[k]) { m[k].anisotropy = renderer.capabilities.getMaxAnisotropy(); m[k].needsUpdate = true; } });
+          if (m.isMeshStandardMaterial) { m.roughness = Math.max(m.roughness ?? 0.6, 0.3); m.metalness = Math.min(m.metalness ?? 0.0, 0.05); } m.needsUpdate = true;
+        });
+        earthGroup.add(model);
+        const nb = new THREE.Box3().setFromObject(earthGroup), ns = nb.getSize(new THREE.Vector3());
+        earthRadius = Math.max(ns.x, ns.y, ns.z) / 2;
+        buildAtmo(earthRadius);
+        rebuildFlags();
+        selectLocation(0);
+        document.getElementById('loading').style.display = 'none';
+        document.getElementById('upload').style.display = 'none';
+      },
+        xhr => { if (xhr.total) document.querySelector('#loading p').textContent = `LOADING ${Math.round(xhr.loaded / xhr.total * 100)}%`; },
+        err => { console.error(err); buildPlaceholder(); document.getElementById('loading').style.display = 'none'; });
+    }
+    document.getElementById('file-in').addEventListener('change', e => { const f = e.target.files[0]; if (f) loadGLB(URL.createObjectURL(f)); });
+
+    function latLonTo3D(lat, lon, radius) {
+      const phi = THREE.MathUtils.degToRad(90 - lat);
+      const theta = THREE.MathUtils.degToRad(-lon);
+      return new THREE.Vector3(radius * Math.sin(phi) * Math.cos(theta), radius * Math.cos(phi), radius * Math.sin(phi) * Math.sin(theta));
+    }
+
+    let flagEls = [];
+    function rebuildFlags() {
+      const cont = document.getElementById('flags-container'); cont.innerHTML = ''; flagEls = [];
+      LOCATIONS.forEach((loc, i) => {
+        const el = document.createElement('div');
+        el.className = 'flag-marker' + (i === activeIndex ? ' active-flag' : '');
+        el.innerHTML = `<div class="pin-icon"><svg viewBox="0 0 36 48" xmlns="http://www.w3.org/2000/svg"><defs><radialGradient id="pg" cx="40%" cy="35%"><stop offset="0%" stop-color="#ff6b3d"/><stop offset="100%" stop-color="#d63a00"/></radialGradient></defs><path d="M18 0C8.06 0 0 8.06 0 18c0 12.6 18 30 18 30s18-17.4 18-30C36 8.06 27.94 0 18 0z" fill="url(#pg)"/><circle cx="18" cy="17" r="7" fill="white" opacity="0.9"/></svg></div>`;
+        el.addEventListener('click', () => selectLocation(i));
+        cont.appendChild(el);
+        flagEls.push({ el, loc, pos3D: latLonTo3D(loc.lat, loc.lon, earthRadius) });
+      });
+    }
+    rebuildFlags();
+
+    function buildDots() {
+      const d = document.getElementById('dots'); d.innerHTML = '';
+      LOCATIONS.forEach((_, i) => { const el = document.createElement('div'); el.className = 'dot' + (i === activeIndex ? ' active' : ''); el.addEventListener('click', () => selectLocation(i)); d.appendChild(el); });
+    }
+    buildDots();
+
+    function selectLocation(index) {
+      activeIndex = index; const loc = LOCATIONS[index];
+      document.getElementById('card-name').textContent = loc.name;
+      document.getElementById('card-sub').textContent = loc.sub;
+      document.getElementById('card-flag-img').src = loc.flag;
+      flagEls.forEach((f, i) => f.el.classList.toggle('active-flag', i === index));
+      const sideEl = document.getElementById('side-flags'); sideEl.innerHTML = '';
+      LOCATIONS.filter((_, i) => i !== index).forEach(other => {
+        const div = document.createElement('div'); div.className = 'side-flag';
+        div.innerHTML = `<img src="${other.flag}" alt="${other.name}">`;
+        div.addEventListener('click', () => selectLocation(LOCATIONS.indexOf(other)));
+        sideEl.appendChild(div);
+      });
+      document.querySelectorAll('.dot').forEach((d, i) => d.classList.toggle('active', i === index));
+      zoomToLocation(loc);
+    }
+
+    function easeInOut(t) { t = Math.min(t, 1); return t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t; }
+    let animating = false;
+
+    function zoomToLocation(loc) {
+      animating = true;
+      // Camera orbits around earth to face the location
+      const pos3D = latLonTo3D(loc.lat, loc.lon, earthRadius);
+      const camDir = pos3D.clone().normalize();
+      const endPos = camDir.clone().multiplyScalar(loc.zoomDist);
+      // Raise camera slightly above the point
+      endPos.y += 0.3;
+
+      const startPos = camera.position.clone();
+      const startFOV = camera.fov, endFOV = 32;
+      const startTarget = controls.target.clone();
+      const endTarget = new THREE.Vector3(0, 0.2, 0);
+      const duration = 2000, startTime = performance.now();
+
+      function step(now) {
+        const t = easeInOut((now - startTime) / duration);
+        camera.position.lerpVectors(startPos, endPos, t);
+        controls.target.lerpVectors(startTarget, endTarget, t);
+        camera.fov = startFOV + (endFOV - startFOV) * t;
+        camera.updateProjectionMatrix();
+        controls.update();
+        if ((now - startTime) < duration) requestAnimationFrame(step);
+        else animating = false;
+      }
+      requestAnimationFrame(step);
+    }
+
+    // Atmo stays fixed with earth (no rotation sync needed)
+
+    selectLocation(0);
+    setTimeout(() => { document.getElementById('loading').style.display = 'none'; }, 500);
+
+    window.addEventListener('resize', () => { camera.aspect = innerWidth / innerHeight; camera.updateProjectionMatrix(); renderer.setSize(innerWidth, innerHeight); });
+
+    function animate() {
+      requestAnimationFrame(animate);
+      if (!animating) controls.update();
+      earthGroup.updateMatrixWorld(true);
+      flagEls.forEach(item => {
+        const proj = item.pos3D.clone().project(camera);
+        const x = (proj.x * 0.5 + 0.5) * innerWidth, y = (-proj.y * 0.5 + 0.5) * innerHeight;
+        const camDir = camera.position.clone().normalize();
+        const dot = item.pos3D.clone().normalize().dot(camDir);
+        const visible = dot > 0.05 && proj.z < 1.0;
+        item.el.style.left = x + 'px'; item.el.style.top = y + 'px';
+        item.el.style.display = visible ? 'flex' : 'none';
+        item.el.style.opacity = visible ? Math.min(1, (dot - 0.05) * 5) : '0';
+        item.el.style.zIndex = visible ? Math.round(dot * 100) : 0;
+      });
+      renderer.render(scene, camera);
+    }
+    animate();
+  </script>
+</body>
+
+</html> -->
+
+
+
+
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Saddi Duniya</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { background: #000; overflow: hidden; font-family: 'Segoe UI', Arial, sans-serif; }
+    #c { display: block; width: 100vw; height: 100vh; }
+
+    #loading {
+      position: fixed; inset: 0; background: #000;
+      display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 999;
+    }
+    .ring {
+      width: 52px; height: 52px;
+      border: 3px solid rgba(255,255,255,0.07); border-top-color: rgba(80,160,255,0.9);
+      border-radius: 50%; animation: spin 0.85s linear infinite; margin-bottom: 14px;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    #loading p { color: rgba(100,180,255,0.65); font-size: 11px; letter-spacing: 3px; }
+
+    #menu-btn {
+      position: fixed; top: 20px; right: 24px;
+      width: 48px; height: 48px;
+      background: rgba(30,30,40,0.75); border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 50%; display: flex; flex-direction: column; align-items: center;
+      justify-content: center; gap: 5px; cursor: pointer; z-index: 300;
+      backdrop-filter: blur(12px); transition: background 0.2s;
+    }
+    #menu-btn:hover { background: rgba(50,50,65,0.9); }
+    #menu-btn span { display: block; width: 20px; height: 2px; background: #fff; border-radius: 2px; }
+
+    .flag-marker {
+      position: fixed; pointer-events: auto; cursor: pointer;
+      transform: translate(-50%, -100%); z-index: 50;
+      display: flex; flex-direction: column; align-items: center;
+      transition: opacity 0.3s; filter: drop-shadow(0 4px 8px rgba(0,0,0,0.5));
+    }
+    .pin-icon { width: 36px; height: 48px; position: relative; transition: transform 0.2s; }
+    .pin-icon svg { width: 100%; height: 100%; }
+    .flag-marker:hover .pin-icon { transform: scale(1.15); }
+    .flag-marker.active-flag .pin-icon { transform: scale(1.2); filter: brightness(1.1); }
+
+    #bottom-panel {
+      position: fixed; bottom: 36px; left: 50%; transform: translateX(-50%);
+      z-index: 300; display: flex; flex-direction: column; align-items: center; gap: 14px;
+    }
+    .panel-row { display: flex; align-items: flex-end; gap: 14px; }
+    .side-flags { display: flex; gap: 10px; align-items: center; margin-bottom: 4px; }
+
+    .side-flag {
+      width: 54px; height: 54px; border-radius: 50%;
+      border: 2.5px solid rgba(255,255,255,0.22); overflow: hidden; cursor: pointer;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.6); transition: transform 0.2s, border-color 0.2s; flex-shrink: 0;
+    }
+    .side-flag:hover { transform: scale(1.1); border-color: rgba(255,255,255,0.55); }
+    .side-flag img { width: 100%; height: 100%; object-fit: cover; }
+
+    .info-card {
+      background: rgba(14,14,20,0.92); border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 18px; padding: 16px 20px 15px; min-width: 240px;
+      backdrop-filter: blur(24px); box-shadow: 0 24px 60px rgba(0,0,0,0.85);
+    }
+    .card-header { display: flex; align-items: center; gap: 12px; margin-bottom: 13px; }
+    .card-flag-img {
+      width: 36px; height: 24px; border-radius: 4px; object-fit: cover;
+      border: 1px solid rgba(255,255,255,0.18); flex-shrink: 0;
+    }
+    .card-title { font-size: 16px; font-weight: 700; color: #fff; line-height: 1.2; }
+    .card-sub { font-size: 11px; color: rgba(255,255,255,0.4); margin-top: 2px; }
+
+    .explore-btn {
+      width: 100%; padding: 12px 0;
+      background: linear-gradient(90deg, #d94e0c, #f07828);
+      border: none; border-radius: 11px; color: #fff;
+      font-size: 14px; font-weight: 700; letter-spacing: 0.5px; cursor: pointer;
+      transition: opacity 0.2s, transform 0.15s; box-shadow: 0 4px 16px rgba(220,80,20,0.4);
+    }
+    .explore-btn:hover { opacity: 0.88; transform: translateY(-1px); }
+
+    #dots { display: flex; gap: 8px; align-items: center; }
+    .dot {
+      width: 8px; height: 8px; border-radius: 50%;
+      background: rgba(255,255,255,0.25); cursor: pointer;
+      transition: background 0.25s, transform 0.2s; border: 1px solid rgba(255,255,255,0.1);
+    }
+    .dot.active { background: #fff; transform: scale(1.15); }
+
+    #branding {
+      position: fixed; bottom: 20px; right: 22px;
+      display: flex; align-items: center; gap: 10px; z-index: 300;
+    }
+    #branding-text { text-align: right; line-height: 1.25; }
+    #branding-text .b1 { font-size: 12px; color: rgba(255,255,255,0.55); letter-spacing: 0.5px; }
+    #branding-text .b2 { font-size: 14px; font-weight: 700; color: #fff; letter-spacing: 0.5px; }
+    #branding-logo {
+      width: 44px; height: 44px; background: rgba(255,255,255,0.08);
+      border: 1px solid rgba(255,255,255,0.15); border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 10px; color: #fff; font-weight: 700; letter-spacing: 1px;
+    }
+
+    #upload { position: fixed; top: 20px; left: 50%; transform: translateX(-50%); z-index: 200; }
+    #upload label {
+      display: inline-block; padding: 8px 20px;
+      background: rgba(255,255,255,0.07); border: 1px solid rgba(255,255,255,0.15);
+      border-radius: 999px; color: rgba(255,255,255,0.5);
+      font-size: 11px; letter-spacing: 1px; cursor: pointer;
+      transition: all 0.2s; backdrop-filter: blur(8px);
+    }
+    #upload label:hover { background: rgba(255,255,255,0.13); color: #fff; }
+    #file-in { display: none; }
+  </style>
+</head>
+<body>
+
+  <div id="loading"><div class="ring"></div><p>LOADING</p></div>
+  <canvas id="c"></canvas>
+
+  
+  <div id="menu-btn"><span></span><span></span><span></span></div>
+  <div id="flags-container"></div>
+
+  <div id="bottom-panel">
+    <div class="panel-row">
+      <div class="side-flags" id="side-flags"></div>
+      <div class="info-card">
+        <div class="card-header">
+          <img class="card-flag-img" id="card-flag-img" src="" alt="">
+          <div>
+            <div class="card-title" id="card-name"></div>
+            <div class="card-sub" id="card-sub"></div>
+          </div>
+        </div>
+        <button class="explore-btn" id="explore-btn">Explore</button>
+      </div>
+    </div>
+    <div id="dots"></div>
+  </div>
+
+  <div id="branding">
+    <div id="branding-text">
+      <div class="b1">The World</div>
+      <div class="b2">of Aldar</div>
+    </div>
+    <div id="branding-logo">ALDAR</div>
+  </div>
+
+  <!-- Import map for ES module Three.js -->
+  <script type="importmap">
+  {
+    "imports": {
+      "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+      "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"
+    }
+  }
+  </script>
+
+  <script type="module">
+    import * as THREE from 'three';
+    import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+    import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+
+    // ── Locations ────────────────────────────────────────────────────────────
+    const LOCATIONS = [
+      { id: 'punjab',  name: 'Punjab, India', sub: 'India · 3 Projects',        lat: 31.1, lon: 75.3,  zoomDist: 2.8, flag: 'https://flagcdn.com/w80/in.png' },
+      { id: 'canada',  name: 'Canada',         sub: 'North America · 5 Projects', lat: 45.5, lon: -75.5, zoomDist: 3.0, flag: 'https://flagcdn.com/w80/ca.png' },
+    ];
+
+    let activeIndex = 0;
+
+    // ── Renderer ─────────────────────────────────────────────────────────────
+    const canvas = document.getElementById('c');
+    const renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
+    renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+    renderer.setSize(innerWidth, innerHeight);
+    renderer.setClearColor(0x000000, 1);
+    renderer.toneMapping = THREE.ACESFilmicToneMapping;
+    renderer.toneMappingExposure = 1.1;
+
+    // ── Scene / Camera ───────────────────────────────────────────────────────
+    const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(38, innerWidth / innerHeight, 0.01, 5000);
+    camera.position.set(0, 1.2, 4.4);
+
+    // ── Controls ─────────────────────────────────────────────────────────────
+    const controls = new OrbitControls(camera, canvas);
+    controls.enableDamping = true;
+    controls.dampingFactor = 0.04;
+    controls.enableZoom = false;
+    controls.enablePan = false;
+    controls.autoRotate = false;
+    controls.target.set(0, 0, 0);
+    controls.update();
+
+    // ── Lights ───────────────────────────────────────────────────────────────
+    const sun = new THREE.DirectionalLight(0xfff5ee, 4.0);
+    sun.position.set(-5, 6, 3);
+    scene.add(sun);
+    scene.add(new THREE.AmbientLight(0x060810, 2.0));
+    const back = new THREE.DirectionalLight(0x0d1f44, 0.35);
+    back.position.set(4, -3, -4);
+    scene.add(back);
+
+    // ── Starfield background ─────────────────────────────────────────────────
+    (function () {
+      const W = 4096, H = 2048;
+      const cv = document.createElement('canvas');
+      cv.width = W; cv.height = H;
+      const ctx = cv.getContext('2d');
+      ctx.fillStyle = '#000'; ctx.fillRect(0, 0, W, H);
+
+      [{ x: .06, y: .52, r: .24, a: .2 }, { x: .83, y: .18, r: .18, a: .12 }].forEach(n => {
+        const g = ctx.createRadialGradient(n.x*W, n.y*H, 0, n.x*W, n.y*H, n.r*W);
+        g.addColorStop(0, `rgba(48,52,80,${n.a})`);
+        g.addColorStop(1, 'rgba(0,0,0,0)');
+        ctx.fillStyle = g; ctx.fillRect(0, 0, W, H);
+      });
+
+      for (let i = 0; i < 6000; i++) {
+        const x = Math.random()*W, y = Math.random()*H;
+        ctx.beginPath(); ctx.arc(x, y, Math.random()*0.65+0.12, 0, Math.PI*2);
+        ctx.fillStyle = `rgba(255,255,255,${Math.random()*0.4+0.12})`; ctx.fill();
+      }
+      for (let i = 0; i < 550; i++) {
+        const x = Math.random()*W, y = Math.random()*H;
+        ctx.beginPath(); ctx.arc(x, y, Math.random()*0.85+0.45, 0, Math.PI*2);
+        ctx.fillStyle = `rgba(195,215,255,${Math.random()*0.4+0.38})`; ctx.fill();
+      }
+      scene.background = new THREE.CanvasTexture(cv);
+    })();
+
+    // ── Atmosphere ───────────────────────────────────────────────────────────
+    let atmoMeshes = [];
+    function buildAtmo(rad) {
+      atmoMeshes.forEach(m => scene.remove(m)); atmoMeshes = [];
+      const geo = new THREE.SphereGeometry(rad * 1.012, 128, 128);
+      const mat = new THREE.ShaderMaterial({
+        transparent: true, depthWrite: false, side: THREE.BackSide,
+        uniforms: { sunDir: { value: new THREE.Vector3(-5,6,3).normalize() } },
+        vertexShader: `
+          varying vec3 vN, vV;
+          void main() {
+            vN = normalize(normalMatrix * normal);
+            vV = normalize(-(modelViewMatrix * vec4(position,1.0)).xyz);
+            gl_Position = projectionMatrix * modelViewMatrix * vec4(position,1.0);
+          }`,
+        fragmentShader: `
+          varying vec3 vN, vV;
+          uniform vec3 sunDir;
+          void main() {
+            float rim = pow(1.0 - clamp(dot(vV, vN), 0.0, 1.0), 3.0);
+            float sun = clamp(dot(vN, sunDir)*1.8+0.55, 0.0, 1.0);
+            vec3 col = mix(vec3(0.2,0.5,1.0), vec3(0.5,0.75,1.0), rim);
+            gl_FragColor = vec4(col, rim * sun * 0.8);
+          }`,
+      });
+      const mesh = new THREE.Mesh(geo, mat);
+      scene.add(mesh); atmoMeshes.push(mesh);
+    }
+
+    // ── Earth placeholder ─────────────────────────────────────────────────────
+    const earthGroup = new THREE.Group();
+    scene.add(earthGroup);
+    let earthRadius = 1.0;
+
+    function clearEarth() {
+      while (earthGroup.children.length) earthGroup.remove(earthGroup.children[0]);
+    }
+    function buildPlaceholder() {
+      clearEarth();
+      const geo = new THREE.SphereGeometry(1, 64, 64);
+      const mat = new THREE.MeshPhongMaterial({ color: 0x1a6088, emissive: 0x020c18 });
+      earthGroup.add(new THREE.Mesh(geo, mat));
+      earthRadius = 1.0;
+      buildAtmo(1.0);
+    }
+    buildPlaceholder();
+
+    // ── GLB Loader ────────────────────────────────────────────────────────────
+    const gltfLoader = new GLTFLoader();
+    function loadGLB(url) {
+      document.getElementById('loading').style.display = 'flex';
+      clearEarth();
+      atmoMeshes.forEach(m => scene.remove(m)); atmoMeshes = [];
+
+      gltfLoader.load(url,
+        gltf => {
+          const model = gltf.scene;
+          const box = new THREE.Box3().setFromObject(model);
+          const size = box.getSize(new THREE.Vector3());
+          const center = box.getCenter(new THREE.Vector3());
+          const s = 2.1 / Math.max(size.x, size.y, size.z);
+          model.scale.setScalar(s);
+          model.position.sub(center.multiplyScalar(s));
+          model.traverse(ch => {
+            if (!ch.isMesh) return;
+            const m = ch.material; if (!m) return;
+            ['map','normalMap','roughnessMap','metalnessMap','aoMap','emissiveMap'].forEach(k => {
+              if (m[k]) { m[k].anisotropy = renderer.capabilities.getMaxAnisotropy(); m[k].needsUpdate = true; }
+            });
+            if (m.isMeshStandardMaterial) {
+              m.roughness  = Math.max(m.roughness  ?? 0.6, 0.3);
+              m.metalness  = Math.min(m.metalness  ?? 0.0, 0.05);
+            }
+            m.needsUpdate = true;
+          });
+          earthGroup.add(model);
+          const nb = new THREE.Box3().setFromObject(earthGroup);
+          const ns = nb.getSize(new THREE.Vector3());
+          earthRadius = Math.max(ns.x, ns.y, ns.z) / 2;
+          buildAtmo(earthRadius);
+          rebuildFlags();
+          selectLocation(activeIndex);
+          document.getElementById('loading').style.display = 'none';
+         
+        },
+        xhr => {
+          if (xhr.total) document.querySelector('#loading p').textContent =
+            `LOADING ${Math.round(xhr.loaded / xhr.total * 100)}%`;
+        },
+        err => {
+          console.error(err);
+       
+loadGLB('globe.glb');
+          document.getElementById('loading').style.display = 'none';
+        }
+      );
+    }
+
+
+    // ── Coordinate helpers ────────────────────────────────────────────────────
+    function latLonTo3D(lat, lon, radius) {
+      const phi   = THREE.MathUtils.degToRad(90 - lat);
+      const theta = THREE.MathUtils.degToRad(-lon);
+      return new THREE.Vector3(
+        radius * Math.sin(phi) * Math.cos(theta),
+        radius * Math.cos(phi),
+        radius * Math.sin(phi) * Math.sin(theta)
+      );
+    }
+
+    // ── Flags ─────────────────────────────────────────────────────────────────
+    let flagEls = [];
+    function rebuildFlags() {
+      const cont = document.getElementById('flags-container');
+      cont.innerHTML = ''; flagEls = [];
+      LOCATIONS.forEach((loc, i) => {
+        const el = document.createElement('div');
+        el.className = 'flag-marker' + (i === activeIndex ? ' active-flag' : '');
+        el.innerHTML = `<div class="pin-icon">
+          <svg viewBox="0 0 36 48" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <radialGradient id="pg${i}" cx="40%" cy="35%">
+                <stop offset="0%" stop-color="#ff6b3d"/>
+                <stop offset="100%" stop-color="#d63a00"/>
+              </radialGradient>
+            </defs>
+            <path d="M18 0C8.06 0 0 8.06 0 18c0 12.6 18 30 18 30s18-17.4 18-30C36 8.06 27.94 0 18 0z" fill="url(#pg${i})"/>
+            <circle cx="18" cy="17" r="7" fill="white" opacity="0.9"/>
+          </svg>
+        </div>`;
+        el.addEventListener('click', () => selectLocation(i));
+        cont.appendChild(el);
+        flagEls.push({ el, loc, pos3D: latLonTo3D(loc.lat, loc.lon, earthRadius) });
+      });
+    }
+    rebuildFlags();
+
+    // ── Dots ─────────────────────────────────────────────────────────────────
+    function buildDots() {
+      const d = document.getElementById('dots'); d.innerHTML = '';
+      LOCATIONS.forEach((_, i) => {
+        const el = document.createElement('div');
+        el.className = 'dot' + (i === activeIndex ? ' active' : '');
+        el.addEventListener('click', () => selectLocation(i));
+        d.appendChild(el);
+      });
+    }
+    buildDots();
+
+    // ── Select / zoom ─────────────────────────────────────────────────────────
+    function selectLocation(index) {
+      activeIndex = index;
+      const loc = LOCATIONS[index];
+      document.getElementById('card-name').textContent = loc.name;
+      document.getElementById('card-sub').textContent  = loc.sub;
+      document.getElementById('card-flag-img').src     = loc.flag;
+
+      flagEls.forEach((f, i) => f.el.classList.toggle('active-flag', i === index));
+
+      const sideEl = document.getElementById('side-flags'); sideEl.innerHTML = '';
+      LOCATIONS.filter((_, i) => i !== index).forEach(other => {
+        const div = document.createElement('div'); div.className = 'side-flag';
+        div.innerHTML = `<img src="${other.flag}" alt="${other.name}">`;
+        div.addEventListener('click', () => selectLocation(LOCATIONS.indexOf(other)));
+        sideEl.appendChild(div);
+      });
+
+      document.querySelectorAll('.dot').forEach((d, i) => d.classList.toggle('active', i === index));
+      zoomToLocation(loc);
+    }
+
+    function easeInOut(t) { t = Math.min(Math.max(t, 0), 1); return t < 0.5 ? 2*t*t : -1+(4-2*t)*t; }
+
+    let animating = false;
+    let animRafId = null;
+
+    function zoomToLocation(loc) {
+      // Cancel any in-progress animation
+      if (animRafId !== null) { cancelAnimationFrame(animRafId); animRafId = null; }
+
+      animating = true;
+      controls.enableDamping = false; // disable damping while we drive the camera manually
+
+      const pos3D  = latLonTo3D(loc.lat, loc.lon, earthRadius);
+      const camDir = pos3D.clone().normalize();
+      // Pure direction-based end position — no Y offset so controls.target stays at origin cleanly
+      const endPos = camDir.clone().multiplyScalar(loc.zoomDist);
+
+      const startPos = camera.position.clone();
+      const startFOV = camera.fov;
+      const endFOV   = 34;
+
+      // Always animate target to exact origin to avoid OrbitControls drift
+      const startTarget = controls.target.clone();
+      const endTarget   = new THREE.Vector3(0, 0, 0);
+
+      const duration  = 1800;
+      const startTime = performance.now();
+
+      function step(now) {
+        const raw = (now - startTime) / duration;
+        const t   = easeInOut(raw);
+
+        camera.position.lerpVectors(startPos, endPos, t);
+        controls.target.lerpVectors(startTarget, endTarget, t);
+        camera.fov = startFOV + (endFOV - startFOV) * t;
+        camera.updateProjectionMatrix();
+
+        // Sync OrbitControls internal spherical state to the camera we just moved
+        // so it doesn't fight us with damping from a stale position
+        controls.update();
+
+        if (raw < 1.0) {
+          animRafId = requestAnimationFrame(step);
+        } else {
+          // Snap exactly to end values
+          camera.position.copy(endPos);
+          controls.target.copy(endTarget);
+          camera.fov = endFOV;
+          camera.updateProjectionMatrix();
+          // Force OrbitControls to re-sync its internal state from the final camera position
+          // so damping starts from zero velocity (no snap/jitter on resume)
+          controls.enableDamping = true;
+          controls.update();
+          animating  = false;
+          animRafId  = null;
+        }
+      }
+
+      animRafId = requestAnimationFrame(step);
+    }
+
+    // ── Resize ───────────────────────────────────────────────────────────────
+    window.addEventListener('resize', () => {
+      camera.aspect = innerWidth / innerHeight;
+      camera.updateProjectionMatrix();
+      renderer.setSize(innerWidth, innerHeight);
+    });
+
+    // ── Hide loading & first select ──────────────────────────────────────────
+    selectLocation(0);
+    setTimeout(() => { document.getElementById('loading').style.display = 'none'; }, 600);
+
+    // ── Render loop ──────────────────────────────────────────────────────────
+    function animate() {
+      requestAnimationFrame(animate);
+      // During camera animation, controls.update() is already called inside step().
+      // When idle, call it here so OrbitControls damping works smoothly.
+      if (!animating) controls.update();
+
+      // keep sun on camera side so earth is always lit
+      sun.position.copy(camera.position).normalize().multiplyScalar(10);
+      sun.position.y += 3;
+
+      atmoMeshes.forEach(m => {
+        if (m.material.uniforms?.sunDir)
+          m.material.uniforms.sunDir.value.copy(sun.position).normalize();
+      });
+
+      earthGroup.updateMatrixWorld(true);
+      flagEls.forEach(item => {
+        const proj = item.pos3D.clone().project(camera);
+        const x = (proj.x * 0.5 + 0.5) * innerWidth;
+        const y = (-proj.y * 0.5 + 0.5) * innerHeight;
+        const camDir = camera.position.clone().normalize();
+        const dot    = item.pos3D.clone().normalize().dot(camDir);
+        const visible = dot > 0.05 && proj.z < 1.0;
+        item.el.style.left    = x + 'px';
+        item.el.style.top     = y + 'px';
+        item.el.style.display = visible ? 'flex' : 'none';
+        item.el.style.opacity = visible ? Math.min(1, (dot - 0.05) * 5) : '0';
+        item.el.style.zIndex  = visible ? Math.round(dot * 100) : 0;
+      });
+
+      renderer.render(scene, camera);
+    }
+    animate();
+  </script>
+</body>
+</html>
