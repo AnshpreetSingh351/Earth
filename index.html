@@ -1,137 +1,315 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Saddi Duniya</title>
   <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    body { background: #000; overflow: hidden; font-family: 'Segoe UI', Arial, sans-serif; }
-    #c { display: block; width: 100vw; height: 100vh; }
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      background: #000;
+      overflow: hidden;
+      font-family: 'Segoe UI', Arial, sans-serif;
+    }
+
+    #c {
+      display: block;
+      width: 100vw;
+      height: 100vh;
+    }
 
     /* ── Loading ── */
     #loading {
-      position: fixed; inset: 0; background: #000;
-      display: flex; flex-direction: column;
-      align-items: center; justify-content: center; z-index: 999;
+      position: fixed;
+      inset: 0;
+      background: #000;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      z-index: 999;
     }
+
     .ring {
-      width: 52px; height: 52px;
-      border: 3px solid rgba(255,255,255,0.07);
-      border-top-color: rgba(80,160,255,0.9);
+      width: 52px;
+      height: 52px;
+      border: 3px solid rgba(255, 255, 255, 0.07);
+      border-top-color: rgba(80, 160, 255, 0.9);
       border-radius: 50%;
       animation: spin 0.85s linear infinite;
       margin-bottom: 14px;
     }
-    @keyframes spin { to { transform: rotate(360deg); } }
-    #loading p { color: rgba(100,180,255,0.65); font-size: 11px; letter-spacing: 3px; }
+
+    @keyframes spin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    #loading p {
+      color: rgba(100, 180, 255, 0.65);
+      font-size: 11px;
+      letter-spacing: 3px;
+    }
 
 
 
     /* ── Menu button ── */
     #menu-btn {
-      position: fixed; top: 20px; right: 24px;
-      width: 48px; height: 48px;
-      background: rgba(30,30,40,0.75);
-      border: 1px solid rgba(255,255,255,0.12);
-      border-radius: 50%; display: flex; flex-direction: column;
-      align-items: center; justify-content: center; gap: 5px;
-      cursor: pointer; z-index: 300;
-      backdrop-filter: blur(12px); transition: background 0.2s;
+      position: fixed;
+      top: 20px;
+      right: 24px;
+      width: 48px;
+      height: 48px;
+      background: rgba(30, 30, 40, 0.75);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 50%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 5px;
+      cursor: pointer;
+      z-index: 300;
+      backdrop-filter: blur(12px);
+      transition: background 0.2s;
     }
-    #menu-btn:hover { background: rgba(50,50,65,0.9); }
-    #menu-btn span { display: block; width: 20px; height: 2px; background: #fff; border-radius: 2px; }
+
+    #menu-btn:hover {
+      background: rgba(50, 50, 65, 0.9);
+    }
+
+    #menu-btn span {
+      display: block;
+      width: 20px;
+      height: 2px;
+      background: #fff;
+      border-radius: 2px;
+    }
 
     /* ── Flag pins ── */
     .flag-marker {
-      position: fixed; pointer-events: auto; cursor: pointer;
-      transform: translate(-50%, -100%); z-index: 50;
-      display: flex; flex-direction: column; align-items: center;
+      position: fixed;
+      pointer-events: auto;
+      cursor: pointer;
+      transform: translate(-50%, -100%);
+      z-index: 50;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
       transition: opacity 0.3s;
-      filter: drop-shadow(0 4px 8px rgba(0,0,0,0.5));
+      filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.5));
     }
-    .pin-icon { width: 36px; height: 48px; transition: transform 0.2s; }
-    .pin-icon svg { width: 100%; height: 100%; }
-    .flag-marker:hover .pin-icon { transform: scale(1.15); }
-    .flag-marker.active-flag .pin-icon { transform: scale(1.2); filter: brightness(1.1); }
+
+    .pin-icon {
+      width: 36px;
+      height: 48px;
+      transition: transform 0.2s;
+    }
+
+    .pin-icon svg {
+      width: 100%;
+      height: 100%;
+    }
+
+    .flag-marker:hover .pin-icon {
+      transform: scale(1.15);
+    }
+
+    .flag-marker.active-flag .pin-icon {
+      transform: scale(1.2);
+      filter: brightness(1.1);
+    }
 
     /* ── Bottom panel ── */
     #bottom-panel {
-      position: fixed; bottom: 36px; left: 50%;
+      position: fixed;
+      bottom: 36px;
+      left: 50%;
       transform: translateX(-50%);
-      z-index: 300; display: flex; flex-direction: column;
-      align-items: center; gap: 14px;
+      z-index: 300;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 14px;
     }
-    .panel-row { display: flex; align-items: flex-end; gap: 14px; }
-    .side-flags { display: flex; gap: 10px; align-items: center; margin-bottom: 4px; }
+
+    .panel-row {
+      display: flex;
+      align-items: flex-end;
+      gap: 14px;
+    }
+
+    .side-flags {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      margin-bottom: 4px;
+    }
 
     .side-flag {
-      width: 54px; height: 54px; border-radius: 50%;
-      border: 2.5px solid rgba(255,255,255,0.22);
-      overflow: hidden; cursor: pointer;
-      box-shadow: 0 4px 16px rgba(0,0,0,0.6);
-      transition: transform 0.2s, border-color 0.2s; flex-shrink: 0;
+      width: 54px;
+      height: 54px;
+      border-radius: 50%;
+      border: 2.5px solid rgba(255, 255, 255, 0.22);
+      overflow: hidden;
+      cursor: pointer;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.6);
+      transition: transform 0.2s, border-color 0.2s;
+      flex-shrink: 0;
     }
-    .side-flag:hover { transform: scale(1.1); border-color: rgba(255,255,255,0.55); }
-    .side-flag img { width: 100%; height: 100%; object-fit: cover; }
+
+    .side-flag:hover {
+      transform: scale(1.1);
+      border-color: rgba(255, 255, 255, 0.55);
+    }
+
+    .side-flag img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
 
     .info-card {
-      background: rgba(14,14,20,0.92);
-      border: 1px solid rgba(255,255,255,0.08);
-      border-radius: 18px; padding: 16px 20px 15px; min-width: 240px;
+      background: rgba(14, 14, 20, 0.92);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 18px;
+      padding: 16px 20px 15px;
+      min-width: 240px;
       backdrop-filter: blur(24px);
-      box-shadow: 0 24px 60px rgba(0,0,0,0.85);
+      box-shadow: 0 24px 60px rgba(0, 0, 0, 0.85);
     }
-    .card-header { display: flex; align-items: center; gap: 12px; margin-bottom: 13px; }
+
+    .card-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 13px;
+    }
+
     .card-flag-img {
-      width: 36px; height: 24px; border-radius: 4px; object-fit: cover;
-      border: 1px solid rgba(255,255,255,0.18); flex-shrink: 0;
+      width: 36px;
+      height: 24px;
+      border-radius: 4px;
+      object-fit: cover;
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      flex-shrink: 0;
     }
-    .card-title { font-size: 16px; font-weight: 700; color: #fff; line-height: 1.2; }
-    .card-sub { font-size: 11px; color: rgba(255,255,255,0.4); margin-top: 2px; }
+
+    .card-title {
+      font-size: 16px;
+      font-weight: 700;
+      color: #fff;
+      line-height: 1.2;
+    }
+
+    .card-sub {
+      font-size: 11px;
+      color: rgba(255, 255, 255, 0.4);
+      margin-top: 2px;
+    }
 
     .explore-btn {
-      width: 100%; padding: 12px 0;
+      width: 100%;
+      padding: 12px 0;
       background: linear-gradient(90deg, #d94e0c, #f07828);
-      border: none; border-radius: 11px; color: #fff;
-      font-size: 14px; font-weight: 700; letter-spacing: 0.5px;
-      cursor: pointer; transition: opacity 0.2s, transform 0.15s;
-      box-shadow: 0 4px 16px rgba(220,80,20,0.4);
+      border: none;
+      border-radius: 11px;
+      color: #fff;
+      font-size: 14px;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      cursor: pointer;
+      transition: opacity 0.2s, transform 0.15s;
+      box-shadow: 0 4px 16px rgba(220, 80, 20, 0.4);
     }
-    .explore-btn:hover { opacity: 0.88; transform: translateY(-1px); }
+
+    .explore-btn:hover {
+      opacity: 0.88;
+      transform: translateY(-1px);
+    }
 
     /* ── Dots ── */
-    #dots { display: flex; gap: 8px; align-items: center; }
-    .dot {
-      width: 8px; height: 8px; border-radius: 50%;
-      background: rgba(255,255,255,0.25); cursor: pointer;
-      transition: background 0.25s, transform 0.2s;
-      border: 1px solid rgba(255,255,255,0.1);
+    #dots {
+      display: flex;
+      gap: 8px;
+      align-items: center;
     }
-    .dot.active { background: #fff; transform: scale(1.15); }
+
+    .dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.25);
+      cursor: pointer;
+      transition: background 0.25s, transform 0.2s;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .dot.active {
+      background: #fff;
+      transform: scale(1.15);
+    }
 
     /* ── Branding ── */
     #branding {
-      position: fixed; bottom: 20px; right: 22px;
-      display: flex; align-items: center; gap: 10px; z-index: 300;
+      position: fixed;
+      bottom: 20px;
+      right: 22px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      z-index: 300;
     }
-    #branding-text { text-align: right; line-height: 1.25; }
-    #branding-text .b1 { font-size: 12px; color: rgba(255,255,255,0.55); letter-spacing: 0.5px; }
-    #branding-text .b2 { font-size: 14px; font-weight: 700; color: #fff; letter-spacing: 0.5px; }
+
+    #branding-text {
+      text-align: right;
+      line-height: 1.25;
+    }
+
+    #branding-text .b1 {
+      font-size: 12px;
+      color: rgba(255, 255, 255, 0.55);
+      letter-spacing: 0.5px;
+    }
+
+    #branding-text .b2 {
+      font-size: 14px;
+      font-weight: 700;
+      color: #fff;
+      letter-spacing: 0.5px;
+    }
+
     #branding-logo {
-      width: 44px; height: 44px;
-      background: rgba(255,255,255,0.08);
-      border: 1px solid rgba(255,255,255,0.15);
-      border-radius: 10px; display: flex; align-items: center;
-      justify-content: center; font-size: 10px; color: #fff;
-      font-weight: 700; letter-spacing: 1px;
+      width: 44px;
+      height: 44px;
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 10px;
+      color: #fff;
+      font-weight: 700;
+      letter-spacing: 1px;
     }
   </style>
 </head>
+
 <body>
 
   <!-- Loading screen -->
-  <div id="loading"><div class="ring"></div><p>LOADING</p></div>
+  <div id="loading">
+    <div class="ring"></div>
+    <p>LOADING</p>
+  </div>
 
   <!-- 3-D canvas -->
   <canvas id="c"></canvas>
@@ -151,10 +329,10 @@
           <img class="card-flag-img" id="card-flag-img" src="" alt="">
           <div>
             <div class="card-title" id="card-name"></div>
-            <div class="card-sub"  id="card-sub"></div>
+            <div class="card-sub" id="card-sub"></div>
           </div>
         </div>
-        <button class="explore-btn" id="explore-btn">Explore</button>
+        <button class="explore-btn" id="explore-btn" onclick="window.location.href='/Subpage/index.html'">Explore</button>
       </div>
     </div>
     <div id="dots"></div>
@@ -180,8 +358,8 @@
   </script>
 
   <script type="module">
-    import * as THREE        from 'three';
-    import { GLTFLoader }    from 'three/addons/loaders/GLTFLoader.js';
+    import * as THREE from 'three';
+    import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
     import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 
     // ─────────────────────────────────────────────────────────────────────────
@@ -207,18 +385,18 @@
     // ─────────────────────────────────────────────────────────────────────────
     // RENDERER
     // ─────────────────────────────────────────────────────────────────────────
-    const canvas   = document.getElementById('c');
+    const canvas = document.getElementById('c');
     const renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
     renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
     renderer.setSize(innerWidth, innerHeight);
     renderer.setClearColor(0x000000, 1);
-    renderer.toneMapping         = THREE.ACESFilmicToneMapping;
+    renderer.toneMapping = THREE.ACESFilmicToneMapping;
     renderer.toneMappingExposure = 1.1;
 
     // ─────────────────────────────────────────────────────────────────────────
     // SCENE / CAMERA
     // ─────────────────────────────────────────────────────────────────────────
-    const scene  = new THREE.Scene();
+    const scene = new THREE.Scene();
     const camera = new THREE.PerspectiveCamera(38, innerWidth / innerHeight, 0.01, 5000);
     camera.position.set(0, 1.2, 4.4);
 
@@ -226,11 +404,11 @@
     // ORBIT CONTROLS
     // ─────────────────────────────────────────────────────────────────────────
     const controls = new OrbitControls(camera, canvas);
-    controls.enableDamping  = true;
-    controls.dampingFactor  = 0.04;
-    controls.enableZoom     = false;
-    controls.enablePan      = false;
-    controls.autoRotate     = false;
+    controls.enableDamping = true;
+    controls.dampingFactor = 0.04;
+    controls.enableZoom = false;
+    controls.enablePan = false;
+    controls.autoRotate = false;
     controls.target.set(0, 0, 0);
     controls.update();
 
@@ -250,8 +428,8 @@
     // ─────────────────────────────────────────────────────────────────────────
     (function buildStars() {
       const W = 4096, H = 2048;
-      const cv  = document.createElement('canvas');
-      cv.width  = W; cv.height = H;
+      const cv = document.createElement('canvas');
+      cv.width = W; cv.height = H;
       const ctx = cv.getContext('2d');
 
       ctx.fillStyle = '#000';
@@ -262,7 +440,7 @@
         { x: .06, y: .52, r: .24, a: .20 },
         { x: .83, y: .18, r: .18, a: .12 }
       ].forEach(n => {
-        const g = ctx.createRadialGradient(n.x*W, n.y*H, 0, n.x*W, n.y*H, n.r*W);
+        const g = ctx.createRadialGradient(n.x * W, n.y * H, 0, n.x * W, n.y * H, n.r * W);
         g.addColorStop(0, `rgba(48,52,80,${n.a})`);
         g.addColorStop(1, 'rgba(0,0,0,0)');
         ctx.fillStyle = g;
@@ -271,18 +449,18 @@
 
       // Dim stars
       for (let i = 0; i < 6000; i++) {
-        const x = Math.random()*W, y = Math.random()*H;
+        const x = Math.random() * W, y = Math.random() * H;
         ctx.beginPath();
-        ctx.arc(x, y, Math.random()*0.65+0.12, 0, Math.PI*2);
-        ctx.fillStyle = `rgba(255,255,255,${(Math.random()*0.4+0.12).toFixed(2)})`;
+        ctx.arc(x, y, Math.random() * 0.65 + 0.12, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(255,255,255,${(Math.random() * 0.4 + 0.12).toFixed(2)})`;
         ctx.fill();
       }
       // Bright blue-white stars
       for (let i = 0; i < 550; i++) {
-        const x = Math.random()*W, y = Math.random()*H;
+        const x = Math.random() * W, y = Math.random() * H;
         ctx.beginPath();
-        ctx.arc(x, y, Math.random()*0.85+0.45, 0, Math.PI*2);
-        ctx.fillStyle = `rgba(195,215,255,${(Math.random()*0.4+0.38).toFixed(2)})`;
+        ctx.arc(x, y, Math.random() * 0.85 + 0.45, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(195,215,255,${(Math.random() * 0.4 + 0.38).toFixed(2)})`;
         ctx.fill();
       }
 
@@ -299,8 +477,8 @@
 
       const mat = new THREE.ShaderMaterial({
         transparent: true,
-        depthWrite:  false,
-        side:        THREE.BackSide,
+        depthWrite: false,
+        side: THREE.BackSide,
         uniforms: { sunDir: { value: new THREE.Vector3(-5, 6, 3).normalize() } },
         vertexShader: `
           varying vec3 vN, vV;
@@ -353,8 +531,8 @@
     // ─────────────────────────────────────────────────────────────────────────
     // GLB LOADER
     // ─────────────────────────────────────────────────────────────────────────
-    const gltfLoader  = new GLTFLoader();
-    const loadingEl   = document.getElementById('loading');
+    const gltfLoader = new GLTFLoader();
+    const loadingEl = document.getElementById('loading');
     const loadingText = document.querySelector('#loading p');
 
     function loadGLB(url) {
@@ -372,10 +550,10 @@
           const model = gltf.scene;
 
           // Normalise size & centre
-          const box    = new THREE.Box3().setFromObject(model);
-          const size   = box.getSize(new THREE.Vector3());
+          const box = new THREE.Box3().setFromObject(model);
+          const size = box.getSize(new THREE.Vector3());
           const center = box.getCenter(new THREE.Vector3());
-          const s      = 2.1 / Math.max(size.x, size.y, size.z);
+          const s = 2.1 / Math.max(size.x, size.y, size.z);
           model.scale.setScalar(s);
           model.position.sub(center.multiplyScalar(s));
 
@@ -383,9 +561,9 @@
           model.traverse(ch => {
             if (!ch.isMesh || !ch.material) return;
             const m = ch.material;
-            ['map','normalMap','roughnessMap','metalnessMap','aoMap','emissiveMap'].forEach(k => {
+            ['map', 'normalMap', 'roughnessMap', 'metalnessMap', 'aoMap', 'emissiveMap'].forEach(k => {
               if (m[k]) {
-                m[k].anisotropy  = renderer.capabilities.getMaxAnisotropy();
+                m[k].anisotropy = renderer.capabilities.getMaxAnisotropy();
                 m[k].needsUpdate = true;
               }
             });
@@ -399,8 +577,8 @@
           earthGroup.add(model);
 
           // Compute actual radius
-          const nb  = new THREE.Box3().setFromObject(earthGroup);
-          const ns  = nb.getSize(new THREE.Vector3());
+          const nb = new THREE.Box3().setFromObject(earthGroup);
+          const ns = nb.getSize(new THREE.Vector3());
           earthRadius = Math.max(ns.x, ns.y, ns.z) / 2;
 
           buildAtmo(earthRadius);
@@ -433,7 +611,7 @@
     // COORDINATE HELPER
     // ─────────────────────────────────────────────────────────────────────────
     function latLonTo3D(lat, lon, radius) {
-      const phi   = THREE.MathUtils.degToRad(90 - lat);
+      const phi = THREE.MathUtils.degToRad(90 - lat);
       const theta = THREE.MathUtils.degToRad(-lon);
       return new THREE.Vector3(
         radius * Math.sin(phi) * Math.cos(theta),
@@ -496,12 +674,12 @@
     // ─────────────────────────────────────────────────────────────────────────
     function selectLocation(index, animate = true) {
       activeIndex = index;
-      const loc   = LOCATIONS[index];
+      const loc = LOCATIONS[index];
 
       // Update info card
-      document.getElementById('card-name').textContent   = loc.name;
-      document.getElementById('card-sub').textContent    = loc.sub;
-      document.getElementById('card-flag-img').src       = loc.flag;
+      document.getElementById('card-name').textContent = loc.name;
+      document.getElementById('card-sub').textContent = loc.sub;
+      document.getElementById('card-flag-img').src = loc.flag;
 
       // Update pin states
       flagEls.forEach((f, i) => f.el.classList.toggle('active-flag', i === index));
@@ -532,11 +710,11 @@
     // ─────────────────────────────────────────────────────────────────────────
     function easeInOut(t) {
       t = Math.min(Math.max(t, 0), 1);
-      return t < 0.5 ? 2*t*t : -1 + (4 - 2*t)*t;
+      return t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t;
     }
 
-    let animating  = false;
-    let animRafId  = null;
+    let animating = false;
+    let animRafId = null;
 
     function zoomToLocation(loc) {
       // Kill any running animation immediately
@@ -549,22 +727,22 @@
       controls.enableDamping = false;
 
       const targetPos = latLonTo3D(loc.lat, loc.lon, earthRadius)
-                          .normalize()
-                          .multiplyScalar(loc.zoomDist);
+        .normalize()
+        .multiplyScalar(loc.zoomDist);
 
-      const startPos    = camera.position.clone();
-      const startFOV    = camera.fov;
-      const endFOV      = 34;
+      const startPos = camera.position.clone();
+      const startFOV = camera.fov;
+      const endFOV = 34;
       const startTarget = controls.target.clone();
-      const endTarget   = new THREE.Vector3(0, 0, 0);
-      const duration    = 1800;
-      const startTime   = performance.now();
+      const endTarget = new THREE.Vector3(0, 0, 0);
+      const duration = 1800;
+      const startTime = performance.now();
 
       animating = true;
 
       function step(now) {
         const raw = (now - startTime) / duration;
-        const t   = easeInOut(raw);
+        const t = easeInOut(raw);
 
         camera.position.lerpVectors(startPos, targetPos, t);
         controls.target.lerpVectors(startTarget, endTarget, t);
@@ -633,17 +811,17 @@
       const camDir = camera.position.clone().normalize();
 
       flagEls.forEach(item => {
-        const proj    = item.pos3D.clone().project(camera);
-        const x       = (proj.x *  0.5 + 0.5) * innerWidth;
-        const y       = (proj.y * -0.5 + 0.5) * innerHeight;
-        const dot     = item.pos3D.clone().normalize().dot(camDir);
+        const proj = item.pos3D.clone().project(camera);
+        const x = (proj.x * 0.5 + 0.5) * innerWidth;
+        const y = (proj.y * -0.5 + 0.5) * innerHeight;
+        const dot = item.pos3D.clone().normalize().dot(camDir);
         const visible = dot > 0.05 && proj.z < 1.0;
 
-        item.el.style.left    = x + 'px';
-        item.el.style.top     = y + 'px';
-        item.el.style.display = visible ? 'flex'                           : 'none';
-        item.el.style.opacity = visible ? Math.min(1, (dot - 0.05) * 5)   : '0';
-        item.el.style.zIndex  = visible ? Math.round(dot * 100)            : 0;
+        item.el.style.left = x + 'px';
+        item.el.style.top = y + 'px';
+        item.el.style.display = visible ? 'flex' : 'none';
+        item.el.style.opacity = visible ? Math.min(1, (dot - 0.05) * 5) : '0';
+        item.el.style.zIndex = visible ? Math.round(dot * 100) : 0;
       });
 
       renderer.render(scene, camera);
@@ -651,4 +829,5 @@
     renderLoop();
   </script>
 </body>
+
 </html>
