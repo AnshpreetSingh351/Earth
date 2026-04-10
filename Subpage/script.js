@@ -81,7 +81,7 @@ function focusProject(index) {
 
   map.flyTo({
     center: project.coords,
-    zoom: 18,
+    zoom: 17,
     pitch: 75,
     bearing: -30,
     speed: 1.2,
