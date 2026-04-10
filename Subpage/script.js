@@ -1,47 +1,65 @@
+let map;
+
 // ===============================
-// 1. MAP INIT
+// INIT AFTER FULL LOAD
 // ===============================
 
-const map = new maplibregl.Map({
-  container: 'map',
+window.onload = () => {
 
-  style: {
-    version: 8,
-    sources: {
-      satellite: {
-        type: "raster",
-        tiles: [
-          "https://services.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}"
-        ],
-        tileSize: 256
-      }
+  map = new maplibregl.Map({
+    container: 'map',
+
+    style: {
+      version: 8,
+      sources: {
+        satellite: {
+          type: "raster",
+          tiles: [
+            "https://services.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}"
+          ],
+          tileSize: 256
+        }
+      },
+      layers: [
+        { id: "satellite", type: "raster", source: "satellite" }
+      ]
     },
-    layers: [
-      { id: "satellite", type: "raster", source: "satellite" }
-    ]
-  },
 
-  center: [78, 20],
-  zoom: 4,
-  pitch: 0,
-  bearing: 0,
+    center: [78, 20],
+    zoom: 4,
+    pitch: 0,
+    bearing: 0,
+    maxZoom: 18,
+    minZoom: 3
+  });
 
-  maxZoom: 18,
-  minZoom: 3
-});
+  // Controls
+  map.addControl(new maplibregl.NavigationControl({
+    visualizePitch: true,
+    showZoom: true,
+    showCompass: true
+  }));
 
-// Controls
-map.addControl(new maplibregl.NavigationControl({ visualizePitch: true }));
+  // Interactions
+  map.dragPan.enable();
+  map.scrollZoom.enable();
+  map.dragRotate.enable();
+  map.touchZoomRotate.enable();
 
-// Enable full interaction
-map.dragPan.enable();
-map.scrollZoom.enable();
-map.touchZoomRotate.enable();
-map.dragRotate.enable();
+  // Allow right-click rotate
+  map.getCanvas().addEventListener('contextmenu', (e) => e.preventDefault());
+
+  // Resize fix
+  setTimeout(() => map.resize(), 100);
+  setTimeout(() => map.resize(), 500);
+
+  setupProjects();
+  setupThreeLayer();
+};
 
 
 // ===============================
-// 2. DATA
+// DATA
 // ===============================
 
 const projects = [
@@ -51,28 +69,33 @@ const projects = [
 
 
 // ===============================
-// 3. MARKERS
+// MARKERS
 // ===============================
 
-projects.forEach((project, index) => {
+function setupProjects() {
 
-  const el = document.createElement('div');
-  el.className = 'marker';
+  projects.forEach((project, index) => {
 
-  new maplibregl.Marker(el)
-    .setLngLat(project.coords)
-    .addTo(map);
+    const el = document.createElement('div');
+    el.className = 'marker';
 
-  el.addEventListener('click', (e) => {
-    e.stopPropagation();
-    focusProject(index);
+    const marker = new maplibregl.Marker({ element: el })
+      .setLngLat(project.coords)
+      .addTo(map);
+
+    marker.getElement().addEventListener('mousedown', (e) => e.stopPropagation());
+
+    marker.getElement().addEventListener('click', (e) => {
+      e.stopPropagation();
+      focusProject(index);
+    });
+
   });
-
-});
+}
 
 
 // ===============================
-// 4. CAMERA
+// CAMERA
 // ===============================
 
 function focusProject(index) {
@@ -91,141 +114,110 @@ function focusProject(index) {
 
 
 // ===============================
-// 5. THREE + MODEL
+// THREE + MODEL
 // ===============================
 
 let scene, camera, renderer, model;
+let mercator, scale;
 
-map.on('load', () => {
+function setupThreeLayer() {
 
-  const london = [76.7106423, 30.5811009];
+  map.on('load', () => {
 
-  const mercator = maplibregl.MercatorCoordinate.fromLngLat(london, 0);
-  const scale = mercator.meterInMercatorCoordinateUnits();
+    const modelCoords = projects[0].coords;
 
-  const customLayer = {
-    id: '3d-model',
-    type: 'custom',
-    renderingMode: '3d',
+    mercator = maplibregl.MercatorCoordinate.fromLngLat(modelCoords, 0);
+    scale = mercator.meterInMercatorCoordinateUnits();
 
-    onAdd: function (map, gl) {
+    const customLayer = {
+      id: '3d-model',
+      type: 'custom',
+      renderingMode: '3d',
 
-      camera = new THREE.Camera();
-      scene = new THREE.Scene();
+      onAdd: function (map, gl) {
 
-      // ✅ LIGHTING (CORRECT)
-      const ambient = new THREE.AmbientLight(0xffffff, 1.2);
-      scene.add(ambient);
+        camera = new THREE.Camera();
+        scene = new THREE.Scene();
 
-      const hemi = new THREE.HemisphereLight(0xffffff, 0x444444, 1.2);
-      scene.add(hemi);
+        // Lighting
+        scene.add(new THREE.AmbientLight(0xffffff, 1.2));
+        scene.add(new THREE.HemisphereLight(0xffffff, 0x444444, 1.2));
 
-      const dir = new THREE.DirectionalLight(0xffffff, 1);
-      dir.position.set(100, 200, 100);
-      scene.add(dir);
+        const dir = new THREE.DirectionalLight(0xffffff, 1);
+        dir.position.set(100, 200, 100);
+        scene.add(dir);
 
-      const loader = new THREE.GLTFLoader();
+        // Load model
+        const loader = new THREE.GLTFLoader();
 
-      loader.load('model.glb', (gltf) => {
+        loader.load('model.glb', (gltf) => {
 
-        model = gltf.scene;
+          model = gltf.scene;
 
-        // ✅ FIX MATERIAL (NO SEE THROUGH)
-        model.traverse((child) => {
-          if (child.isMesh && child.material) {
-            child.material.transparent = false;
-            child.material.opacity = 1;
-            child.material.depthWrite = true;
-            child.material.depthTest = true;
-            child.material.side = THREE.FrontSide;
-            child.material.needsUpdate = true;
-          }
+          model.traverse((child) => {
+            if (child.isMesh && child.material) {
+              child.material.transparent = false;
+              child.material.depthWrite = true;
+              child.material.depthTest = true;
+              child.material.side = THREE.FrontSide;
+            }
+          });
+
+          model.rotation.set(Math.PI / 2, 0, 0);
+          model.visible = false;
+
+          scene.add(model);
         });
 
-        // ✅ SCALE
-        model.scale.set(scale * 10, scale * 10, scale * 10);
+        renderer = new THREE.WebGLRenderer({
+          canvas: map.getCanvas(),
+          context: gl,
+          antialias: true
+        });
 
-        // ✅ ROTATION
-        model.rotation.x = Math.PI / 2;
+        renderer.autoClear = false;
+        renderer.setPixelRatio(window.devicePixelRatio);
+        renderer.outputEncoding = THREE.sRGBEncoding;
+        renderer.physicallyCorrectLights = true;
+      },
 
-        // ✅ POSITION
-        model.position.set(
-          mercator.x,
-          mercator.y,
-          mercator.z
-        );
+      render: function (gl, matrix) {
 
-        model.visible = false;
+        if (!model) return;
 
-        scene.add(model);
-      });
+        const m = new THREE.Matrix4().fromArray(matrix);
 
-      renderer = new THREE.WebGLRenderer({
-        canvas: map.getCanvas(),
-        context: gl,
-        antialias: true
-      });
+        const transform = new THREE.Matrix4()
+          .makeTranslation(mercator.x, mercator.y, mercator.z)
+          .scale(new THREE.Vector3(scale * 10, -scale * 10, scale * 10));
 
-      renderer.autoClear = false;
-      renderer.sortObjects = true;
+        camera.projectionMatrix = m.multiply(transform);
 
-      // ✅ allow clicking through
-      renderer.domElement.style.pointerEvents = "none";
+        renderer.resetState();
+        renderer.render(scene, camera);
 
-      // ✅ COLOR FIX
-      renderer.outputEncoding = THREE.sRGBEncoding;
-      renderer.physicallyCorrectLights = true;
-    },
+        map.triggerRepaint();
+      }
+    };
 
-    render: function (gl, matrix) {
+    // 🔥 IMPORTANT: Add BELOW base layer so markers stay visible
+    map.addLayer(customLayer, 'satellite');
+  });
 
-      const m = new THREE.Matrix4().fromArray(matrix);
-      camera.projectionMatrix = m;
+  // Show / hide model
+  map.on('move', () => {
 
-      renderer.resetState();
-      renderer.render(scene, camera);
+    if (!model) return;
 
-      map.triggerRepaint();
-    }
-  };
+    const zoom = map.getZoom();
+    const center = map.getCenter();
+    const target = projects[0].coords;
 
-  map.addLayer(customLayer);
-});
+    const distance = Math.sqrt(
+      Math.pow(center.lng - target[0], 2) +
+      Math.pow(center.lat - target[1], 2)
+    );
 
-
-// ===============================
-// 6. SHOW / HIDE MODEL
-// ===============================
-
-map.on('move', () => {
-
-  if (!model) return;
-
-  const zoom = map.getZoom();
-  const center = map.getCenter();
-
-  const london = projects[0].coords;
-
-  const distance = Math.sqrt(
-    Math.pow(center.lng - london[0], 2) +
-    Math.pow(center.lat - london[1], 2)
-  );
-
-  if (zoom > 16 && distance < 0.01) {
-    model.visible = true;
-  } else {
-    model.visible = false;
-  }
-
-});
-
-
-// ===============================
-// 7. ROTATE WITH SHIFT SCROLL
-// ===============================
-
-map.on('wheel', (e) => {
-  if (e.originalEvent.shiftKey) {
-    map.setBearing(map.getBearing() + e.originalEvent.deltaY * 0.1);
-  }
-});s
+    model.visible = (zoom > 16 && distance < 0.01);
+  });
+}
